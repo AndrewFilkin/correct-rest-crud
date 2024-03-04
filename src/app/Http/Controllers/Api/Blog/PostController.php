@@ -4,9 +4,7 @@ namespace App\Http\Controllers\Api\Blog;
 
 use App\Http\Resources\BlogPostResource;
 use App\Models\BlogPost;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\PostCreateRequest;
 use App\Http\Requests\PostUpdateRequest;
