@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Http\Requests\PostCreateUpdateRequest;
+use App\Http\Requests\PostCreateRequest;
+use App\Http\Requests\PostUpdateRequest;
 use Mockery\Exception;
 
 class PostController extends BaseController
@@ -26,7 +27,7 @@ class PostController extends BaseController
     /**
      * Store a newly created resource in storage.
      */
-    public function store(PostCreateUpdateRequest $request)
+    public function store(PostCreateRequest $request)
     {
         try {
             $post = new BlogPost();
@@ -48,23 +49,25 @@ class PostController extends BaseController
     /**
      * Update the specified resource in storage.
      */
-    public function update(PostCreateUpdateRequest $request, string $id)
+    public function update(PostUpdateRequest $request, string $id)
     {
+
         try {
-            $post = BlogPost::find($id);
+        $post = BlogPost::find($id);
 
-            if ($post == null) {
-                return response()->json(['message' => 'Post not found'], 404);
-            }
+        if (empty($post)) {
+            return response()->json(['message' => "Post $id not found"], 404);
+        }
 
-            $post->user_id = $request->input('user_id');
-            $post->slug = $request->input('slug');
-            $post->title = $request->input('title');
-            $post->content = $request->input('content');
+        $data = $request->only(['user_id', 'slug', 'title', 'content']);
+        $result = $post->fill($data)->save();
 
-            $post->save();
-
+        if ($result) {
             return response()->json(['message' => 'Post updated successfully'], 200);
+        } else {
+            return response()->json(['message' => 'Post updated error'], 404);
+        }
+
         } catch (QueryException $e) {
             return response()->json(['error' => 'Database error: ' . $e->getMessage()], 500);
         } catch (Exception $e) {
