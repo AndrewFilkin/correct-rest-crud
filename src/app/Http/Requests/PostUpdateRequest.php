@@ -12,6 +12,7 @@ class PostUpdateRequest extends FormRequest
     public function authorize(): bool
     {
         return true;
+//        return auth()->check();
     }
 
     /**
